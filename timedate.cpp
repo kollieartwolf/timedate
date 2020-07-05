@@ -16,15 +16,15 @@ TimeDate::TimeDate(unsigned short day, unsigned short month, int year,
   setSeconds(seconds);
 }
 
-void TimeDate::printByTemplate(const std::string &tmpl) {
+void TimeDate::printByTemplate(const std::string &tmpl) const {
   std::cout << fillTemplate(tmpl) << std::endl;
 }
 
-int TimeDate::currentTime() {
+int TimeDate::currentTime() const {
   return m_time.hours * 60 * 60 + m_time.minutes * 60 + m_time.seconds;
 }
 
-std::string TimeDate::fillTemplate(const std::string &templ) {
+std::string TimeDate::fillTemplate(const std::string &templ) const {
   std::string result;
   result = TimeDate::stringReplacer(templ, "DD",
                                     std::to_string(getDay() / 10) +
