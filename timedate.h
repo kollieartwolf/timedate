@@ -1,132 +1,90 @@
-#ifndef TIMEDATE_H
-#define TIMEDATE_H
+#ifndef DATETIME_H
+#define DATETIME_H
 
+#include "structs.h"
 #include <iostream>
 #include <string>
 
-struct Date {
-  unsigned short day;
-  unsigned short month;
-  int year;
-};
-
-struct Time {
-  unsigned short hours;
-  unsigned short minutes;
-  unsigned short seconds;
-};
+using namespace std;
 
 class TimeDate {
 public:
   TimeDate() {}
-  TimeDate(const TimeDate &timeDate);
-  TimeDate(unsigned short day = 1, unsigned short month = 1, int year = 1,
-           unsigned short hours = 0, unsigned short minutes = 0,
-           unsigned short seconds = 0);
-  void printByTemplate(const std::string &tmpl) const;
-  unsigned short getDay() const;
-  unsigned short getMonth() const;
-  unsigned short getYear() const;
-  unsigned short getHours() const;
-  unsigned short getMinutes() const;
-  unsigned short getSeconds() const;
-  bool setDay(unsigned short day);
-  bool setMonth(unsigned short month);
-  bool setYear(int year);
-  bool setHours(unsigned short hours);
-  bool setMinutes(unsigned short minutes);
-  bool setSeconds(unsigned short seconds);
-  int currentTime() const;
-  Time getTime() const;
-  Date getDate() const;
-  bool setTime(const Time &time);
-  bool setDate(const Date &date);
-  std::string fillTemplate(const std::string &tmpl) const;
-  static bool isCorrect(unsigned short day, unsigned short month, int year,
-                        unsigned short hours, unsigned short minutes,
-                        unsigned short seconds);
-  static const TimeDate loadDateFromString(const std::string &str,
-                                 const std::string &format);
+  TimeDate(const TimeDate &date_time);
+  TimeDate(const Date &date, const Time &time);
+  unsigned short get_day() const;
+  unsigned short get_month() const;
+  unsigned short get_year() const;
+  unsigned short get_hours() const;
+  unsigned short get_minutes() const;
+  unsigned short get_seconds() const;
+  bool set_day(unsigned short day);
+  bool set_month(unsigned short month);
+  bool set_year(int year);
+  bool set_hours(unsigned short hours);
+  bool set_minutes(unsigned short minutes);
+  bool set_seconds(unsigned short seconds);
+  void print(const string &format) const;
+  static bool check(const Date &date, const Time &time);
+  unsigned short current_time() const;
+  string get_formatted(const string &format) const;
+  Date date() const;
+  Time time() const;
+  static Date get_date_from_string(const string &str, const string &format);
 
 private:
-  Time m_time{0, 0, 0};
-  Date m_date{1, 1, 1};
-  static std::string stringReplacer(const std::string &inputStr,
-                                    const std::string &src,
-                                    const std::string &dst);
+  Date _date{1, 1, 0};
+  Time _time{0, 0, 0};
+  static string replace(const string &str, const string &format,
+                        const string &data);
 };
 
-inline unsigned short TimeDate::getDay() const { return m_date.day; }
-inline unsigned short TimeDate::getMonth() const { return m_date.month; }
-inline unsigned short TimeDate::getYear() const { return m_date.year; }
-inline unsigned short TimeDate::getHours() const { return m_time.hours; }
-inline unsigned short TimeDate::getMinutes() const { return m_time.minutes; }
-inline unsigned short TimeDate::getSeconds() const { return m_time.seconds; }
+inline unsigned short TimeDate::get_day() const { return _date.day; }
+inline unsigned short TimeDate::get_month() const { return _date.month; }
+inline unsigned short TimeDate::get_year() const { return _date.year; }
+inline unsigned short TimeDate::get_hours() const { return _time.hours; }
+inline unsigned short TimeDate::get_minutes() const { return _time.minutes; }
+inline unsigned short TimeDate::get_seconds() const { return _time.seconds; }
 
-inline bool TimeDate::setDay(unsigned short day) {
-  if (not TimeDate::isCorrect(day, m_date.month, m_date.year, m_time.hours,
-                              m_time.minutes, m_time.seconds))
+inline bool TimeDate::set_day(unsigned short day) {
+  if (!TimeDate::check({day, _date.month, _date.year}, _time))
     return false;
-  m_date.day = day;
+  _date.day = day;
   return true;
 }
 
-inline bool TimeDate::setMonth(unsigned short month) {
-  if (not TimeDate::isCorrect(m_date.day, month, m_date.year, m_time.hours,
-                              m_time.minutes, m_time.seconds))
+inline bool TimeDate::set_month(unsigned short month) {
+  if (!TimeDate::check({_date.day, month, _date.year}, _time))
     return false;
-  m_date.month = month;
+  _date.month = month;
   return true;
 }
 
-inline bool TimeDate::setYear(int year) {
-  if (not TimeDate::isCorrect(m_date.day, m_date.month, year, m_time.hours,
-                              m_time.minutes, m_time.seconds))
+inline bool TimeDate::set_year(int year) {
+  if (!TimeDate::check({_date.day, _date.month, year}, _time))
     return false;
-  m_date.year = year;
+  _date.year = year;
   return true;
 }
 
-inline bool TimeDate::setHours(unsigned short hours) {
-  if (not TimeDate::isCorrect(m_date.day, m_date.month, m_date.year, hours,
-                              m_time.minutes, m_time.seconds))
+inline bool TimeDate::set_hours(unsigned short hours) {
+  if (!TimeDate::check(_date, {hours, _time.minutes, _time.seconds}))
     return false;
-  m_time.hours = hours;
+  _time.hours = hours;
   return true;
 }
 
-inline bool TimeDate::setMinutes(unsigned short minutes) {
-  if (not TimeDate::isCorrect(m_date.day, m_date.month, m_date.year,
-                              m_time.hours, minutes, m_time.seconds))
+inline bool TimeDate::set_minutes(unsigned short minutes) {
+  if (!TimeDate::check(_date, {_time.hours, minutes, _time.seconds}))
     return false;
-  m_time.minutes = minutes;
+  _time.minutes = minutes;
   return true;
 }
 
-inline bool TimeDate::setSeconds(unsigned short seconds) {
-  if (not TimeDate::isCorrect(m_date.day, m_date.month, m_date.year,
-                              m_time.hours, m_time.minutes, seconds))
+inline bool TimeDate::set_seconds(unsigned short seconds) {
+  if (!TimeDate::check(_date, {_time.hours, _time.minutes, seconds}))
     return false;
-  m_time.seconds = seconds;
-  return true;
-}
-
-inline Time TimeDate::getTime() const { return m_time; }
-inline Date TimeDate::getDate() const { return m_date; }
-
-inline bool TimeDate::setTime(const Time &time) {
-  if (not TimeDate::isCorrect(m_date.day, m_date.month, m_date.year, time.hours,
-                              time.minutes, time.seconds))
-    return false;
-  m_time = time;
-  return true;
-}
-
-inline bool TimeDate::setDate(const Date &date) {
-  if (not TimeDate::isCorrect(date.day, date.month, date.year, m_time.hours,
-                              m_time.minutes, m_time.seconds))
-    return false;
-  m_date = date;
+  _time.seconds = seconds;
   return true;
 }
 

@@ -1,18 +1,22 @@
-#include <iostream>
-#include <fstream>
 #include "timedate.h"
+#include "structs.h"
+#include <fstream>
+#include <iostream>
 
-int main()
-{
-  TimeDate td(3, 7, 2020, 1, 37, 35);
-  td.printByTemplate("MM/YY/DD");
-  std::ofstream f("file.txt");
-  f << td.fillTemplate("MM/YY/DD HH:MI:SS");
-  f.close();
-  TimeDate td2(td);
-  td2.setHours(2);
-  td2.setMinutes(5);
-  td2.setSeconds(16);
-  td2.printByTemplate("HH:MI:SS");
+int main() {
+  TimeDate today({7, 7, 2020}, {11, 45, 19});
+  cout << today.get_formatted("Now is HH:MI, today is DD.MM, YYYY.") << endl;
+  if (!today.set_day(32))
+    cout << "It's impossible to set day 32." << endl;
+  if (!today.set_minutes(94))
+    cout << "And to set minutes 94. Y'all know why." << endl;
+  cout << "Attempt to write date and time in file \"datetime.txt\"." << endl;
+  ofstream file("datetime.txt");
+  file << today.get_formatted("DD.MM.YYYY HH:MI:SS");
+  file.close();
+  TimeDate someday(TimeDate::get_date_from_string("07.07.2021", "DD.MM.YYYY"),
+                   today.time());
+  cout << someday.get_formatted("And someday is HH:MI, DD.MM, YY. Of course!")
+       << endl;
   return 0;
 }
